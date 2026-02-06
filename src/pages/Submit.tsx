@@ -262,7 +262,7 @@ export default function Submit() {
                       transition={{ duration: 0.3 }}
                     />
                   )}
-                  <span className="relative z-10 flex items-center gap-2">
+                  <span className="relative z-10 flex items-center gap-2 whitespace-nowrap">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="20"
