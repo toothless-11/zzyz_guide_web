@@ -11,8 +11,10 @@ import {
   Gift,
   Target,
 } from "lucide-react";
+import { useIsMobile } from "../components/ui/use-mobile";
 
 export default function JoinUs() {
+  const isMobile = useIsMobile();
   const [selectedDepartment, setSelectedDepartment] = useState<
     number | null
   >(0);
@@ -84,12 +86,6 @@ export default function JoinUs() {
   ];
 
   const recruitmentFlow = [
-    {
-      title: "前期准备",
-      icon: <Gift className="w-8 h-8 md:w-10 md:h-10" />,
-      description: "了解团队情况，准备个人简历和作品",
-      color: "bg-blue-500",
-    },
     {
       title: "在线报名",
       icon: <FileEdit className="w-8 h-8 md:w-10 md:h-10" />,
@@ -206,21 +202,22 @@ export default function JoinUs() {
                 className="bg-white rounded-2xl md:rounded-3xl shadow-md hover:shadow-lg transition-all"
                 style={{ padding: "40px" }}
               >
-                <div
-                  className="w-14 h-14 md:w-16 md:h-16 mx-auto rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-md text-white"
-                  style={{ marginBottom: "20px" }}
-                >
-                  {reason.icon}
+                <div className="flex items-center md:block" style={{ marginBottom: props => window.innerWidth < 768 ? '5px' : '0' }}>
+                  <div
+                    className="w-14 h-14 md:w-16 md:h-16 shrink-0 md:mx-auto rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-md text-white md:mb-5"
+                    style={{ marginRight: "20px" }} // Mobile only effectively due to md:mx-auto overriding
+                  >
+                    {reason.icon}
+                  </div>
+                  <h3
+                    className="text-xl md:text-2xl font-bold text-black text-left md:text-center md:mb-4"
+                  >
+                    {reason.title}
+                  </h3>
                 </div>
-                <h3
-                  className="text-xl md:text-2xl font-bold text-black text-center"
-                  style={{ marginBottom: "16px" }}
-                >
-                  {reason.title}
-                </h3>
                 <p
-                  className="text-base md:text-lg leading-relaxed text-center"
-                  style={{ color: "#707070" }}
+                  className="text-base md:text-lg leading-relaxed text-left md:text-center"
+                  style={{ color: "#707070", marginTop: "10px" }} // Added marginTop for mobile description
                 >
                   {reason.description}
                 </p>
@@ -287,27 +284,38 @@ export default function JoinUs() {
                 className="bg-white rounded-2xl md:rounded-3xl shadow-lg"
                 style={{ padding: "40px" }}
               >
-                <div className="flex flex-col md:flex-row items-start gap-6 md:gap-8">
-                  <motion.div
-                    initial={{ scale: 0.8 }}
-                    animate={{ scale: 1 }}
-                    transition={{
-                      type: "spring",
-                      stiffness: 200,
-                      duration: 0.4,
-                    }}
-                    className={`bg-gradient-to-br ${departments[selectedDepartment].color} text-white rounded-xl w-14 h-14 md:w-16 md:h-16 flex items-center justify-center flex-shrink-0 shadow-md mx-auto md:mx-0`}
-                  >
-                    {departments[selectedDepartment].icon}
-                  </motion.div>
+                <div className="flex flex-col md:flex-row items-start gap-0 md:gap-8">
+                  <div className="flex items-center md:block md:w-auto md:shrink-0" style={{ marginBottom: "5px" }}>
+                    <motion.div
+                      initial={{ scale: 0.8 }}
+                      animate={{ scale: 1 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 200,
+                        duration: 0.4,
+                      }}
+                      className={`bg-gradient-to-br ${departments[selectedDepartment].color} text-white rounded-xl w-14 h-14 md:w-16 md:h-16 flex items-center justify-center flex-shrink-0 shadow-md md:mx-0`}
+                      style={{ marginRight: "20px" }}
+                    >
+                      {departments[selectedDepartment].icon}
+                    </motion.div>
+                    <h3
+                      className="text-2xl font-bold text-black md:hidden"
+                    >
+                      {departments[selectedDepartment].name}
+                    </h3>
+                  </div>
                   <div className="flex-1 w-full">
                     <h3
-                      className="text-2xl md:text-3xl font-bold text-black text-center md:text-left"
+                      className="hidden md:block text-3xl font-bold text-black text-left"
                       style={{ marginBottom: "24px" }}
                     >
                       {departments[selectedDepartment].name}
                     </h3>
-                    <div style={{ marginBottom: "24px" }}>
+                    <div style={{ 
+                      marginBottom: isMobile ? "24px" : "24px",
+                      marginTop: isMobile ? "12px" : "0"
+                    }}>
                       <h4
                         className="text-lg md:text-xl font-bold text-black"
                         style={{ marginBottom: "16px" }}
@@ -330,12 +338,16 @@ export default function JoinUs() {
                             style={{ color: "#707070" }}
                           >
                             <span
-                              className="text-[#0067D1] font-bold text-xl"
-                              style={{ marginTop: "2px" }}
+                              className="text-[#0067D1] font-bold text-xl inline-block"
+                              style={{ 
+                                width: "12px", 
+                                textAlign: "center",
+                                marginTop: isMobile ? "-4px" : "0px"
+                              }}
                             >
                               •
                             </span>
-                            {item}
+                            <span className="flex-1">{item}</span>
                           </motion.li>
                         ))}
                       </ul>
@@ -381,7 +393,7 @@ export default function JoinUs() {
             招新流程
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {recruitmentFlow.map((step, index) => (
               <motion.div
                 key={index}
@@ -396,24 +408,25 @@ export default function JoinUs() {
                   y: -4,
                   transition: { duration: 0.2 },
                 }}
-                className="bg-white rounded-2xl md:rounded-3xl shadow-md hover:shadow-lg transition-all text-center"
+                className="bg-white rounded-2xl md:rounded-3xl shadow-md hover:shadow-lg transition-all text-left md:text-center"
                 style={{ padding: "32px 24px" }}
               >
-                <div
-                  className={`${step.color} text-white rounded-xl w-14 h-14 md:w-16 md:h-16 flex items-center justify-center mx-auto shadow-md`}
-                  style={{ marginBottom: "20px" }}
-                >
-                  {step.icon}
+                <div className="flex items-center md:block">
+                  <div
+                    className={`${step.color} text-white rounded-xl w-14 h-14 md:w-16 md:h-16 flex items-center justify-center shrink-0 md:mx-auto shadow-md md:mb-5`}
+                    style={{ marginRight: "20px" }}
+                  >
+                    {step.icon}
+                  </div>
+                  <h3
+                    className="text-lg md:text-xl font-bold text-black md:mb-3"
+                  >
+                    {step.title}
+                  </h3>
                 </div>
-                <h3
-                  className="text-lg md:text-xl font-bold text-black"
-                  style={{ marginBottom: "12px" }}
-                >
-                  {step.title}
-                </h3>
                 <p
                   className="text-sm md:text-base leading-relaxed"
-                  style={{ color: "#707070" }}
+                  style={{ color: "#707070", marginTop: "10px" }}
                 >
                   {step.description}
                 </p>
